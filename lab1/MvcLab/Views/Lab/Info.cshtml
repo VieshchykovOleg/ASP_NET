@@ -1,0 +1,26 @@
+@model dynamic
+
+<div class="container">
+    <h2>Інформація про лабораторну роботу</h2>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>Номер лабораторної роботи</th>
+                <td>@Model.LabNumber</td>
+            </tr>
+            <tr>
+                <th>Тема</th>
+                <td>@Model.Topic</td>
+            </tr>
+            <tr>
+                <th>Мета</th>
+                <td>@Model.Goal</td>
+            </tr>
+            <tr>
+                <th>Виконавець</th>
+                <td>@Model.StudentName</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

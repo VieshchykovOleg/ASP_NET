@@ -1,0 +1,50 @@
+## Виведені файли та збірки
+bin/
+obj/
+[Bb]uild/
+[Bb]uild[Ll]og.*
+
+## Кеші та тимчасові файли
+*.user
+*.suo
+*.cache
+*.log
+*.vspscc
+*.vssscc
+*.dbmdl
+*.pdb
+
+## Налаштування IDE
+.vs/
+*.csproj.user
+*.sln.docstates
+
+## Пакети та залежності
+packages/
+*.nupkg
+*.snk
+
+## Папки тестів та результатів
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+## Конфігурації
+appsettings.*.json
+secrets.json
+
+## OS специфічне
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## IDE специфічне
+.idea/
+*.sln.ide
+*.sln.iml
+
+## Git специфічне
+*.orig
+*.rej
