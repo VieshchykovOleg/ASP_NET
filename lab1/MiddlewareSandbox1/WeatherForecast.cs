@@ -1,4 +1,4 @@
-namespace MiddlewareSandbox;
+namespace MiddlewareSandbox1;
 
 public class WeatherForecast
 {

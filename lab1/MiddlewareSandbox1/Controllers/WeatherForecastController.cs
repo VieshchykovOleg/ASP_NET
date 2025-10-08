@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace MiddlewareSandbox.Controllers;
+namespace MiddlewareSandbox1.Controllers;
 
 [ApiController]
 [Route("[controller]")]
