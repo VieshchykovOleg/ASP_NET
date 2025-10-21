@@ -1,0 +1,34 @@
+@using SurveyPortal.Models.ViewModels
+@model SurveysListViewModel
+
+<h4 class="mb-4">Доступні опитування</h4>
+
+@foreach (var s in Model?.Surveys ?? Enumerable.Empty<SurveyPortal.Models.Survey>())
+{
+<div class="card mb-3 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">@s.Title</h5>
+        <p class="card-text">@s.Description</p>
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">Створив: @s.Creator</small>
+            <span class="badge bg-success p-2">Рейтинг: @s.AverageRating.ToString("F2")</span>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Стилізований елемент для вибору сторінки -->
+<nav class="mt-4">
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+        {
+        <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-surveyPage="@i">
+                @i
+            </a>
+        </li>
+        }
+    </ul>
+</nav>
