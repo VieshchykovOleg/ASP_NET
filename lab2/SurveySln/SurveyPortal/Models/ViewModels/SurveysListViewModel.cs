@@ -6,5 +6,8 @@ namespace SurveyPortal.Models.ViewModels
     {
         public IEnumerable<Survey> Surveys { get; set; } = Enumerable.Empty<Survey>();
         public PagingInfo PagingInfo { get; set; } = new PagingInfo();
+
+        // ÄÎÄÀÉ ÖÅÉ ĞßÄÎÊ
+        public string? CurrentCategory { get; set; }
     }
 }

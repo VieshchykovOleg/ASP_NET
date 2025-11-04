@@ -1,0 +1,23 @@
+
+@model IEnumerable<string>
+
+    <div class="d-grid gap-2">
+        <a class="btn @(ViewBag.SelectedCategory == null ? "btn-primary" : "btn-outline-primary")"
+           asp-action="Index"
+           asp-controller="Home"
+           asp-route-category=""
+           asp-route-surveyPage="1">
+            Всі опитування
+        </a>
+
+        @foreach (string category in Model ?? Enumerable.Empty<string>())
+    {
+        <a class="btn @(category == ViewBag.SelectedCategory ? "btn-primary" : "btn-outline-primary")"
+           asp-action="Index"
+           asp-controller="Home"
+           asp-route-category="@category"
+           asp-route-surveyPage="1">
+            @category
+        </a>
+    }
+    </div>

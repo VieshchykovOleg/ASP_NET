@@ -1,0 +1,42 @@
+// Лістинг файлу: Views/SurveySession/Index.cshtml
+
+@model SurveyPortal.Models.SurveySession
+
+<h2 class="mb-4">Ваші незавершені опитування</h2>
+
+@if (Model.Lines.Any())
+{
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Назва опитування</th>
+            <th class="text-center">Дія</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var line in Model.Lines)
+            {
+        <tr>
+            <td class="align-middle">@line.Title</td>
+            <td class="text-center">
+                <form asp-action="RemoveFromSession" asp-controller="SurveySession" method="post">
+                    <input type="hidden" name="surveyId" value="@line.SurveyID" />
+                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Видалити
+                    </button>
+                </form>
+            </td>
+        </tr>
+            }
+    </tbody>
+</table>
+}
+else
+{
+<p class="lead">У вас немає незавершених опитувань.</p>
+}
+
+<div class="text-start mt-4">
+    <a class="btn btn-primary" href="@ViewBag.ReturnUrl">Продовжити перегляд</a>
+</div>

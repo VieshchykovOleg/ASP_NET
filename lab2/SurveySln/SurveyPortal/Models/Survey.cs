@@ -12,5 +12,6 @@ namespace SurveyPortal.Models
         // Приклад числового поля для аналізу
         [Column(TypeName = "decimal(8, 2)")]
         public decimal AverageRating { get; set; }
+        public string Category { get; set; } = string.Empty;
     }
 }

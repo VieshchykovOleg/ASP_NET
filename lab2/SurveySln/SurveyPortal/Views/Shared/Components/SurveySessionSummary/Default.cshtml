@@ -1,0 +1,18 @@
+@model SurveyPortal.Models.SurveySession
+@using Microsoft.AspNetCore.Http.Extensions 
+
+<div class="">
+    @if (Model.Lines.Any())
+    {
+        <a class="btn btn-outline-light btn-sm"
+           asp-controller="SurveySession"
+           asp-action="Index"
+           asp-route-returnUrl="@UriHelper.GetEncodedPathAndQuery(Context.Request)">
+            Незавершені (@Model.Lines.Count())
+        </a>
+    }
+    else
+    {
+        <span class="text-light fst-italic me-2">Немає незавершених</span>
+    }
+</div>

@@ -1,0 +1,26 @@
+@model SurveyPortal.Models.Survey
+@using Microsoft.AspNetCore.Http.Extensions
+
+<div class="card mb-3 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text">@Model.Description</p>
+
+        <div class="d-flex justify-content-between align-items.center">
+            <small class="text-muted">Створив: @Model.Creator</small>
+
+            <!-- ФОРМА ДЛЯ ЗАВДАННЯ 3 -->
+            <form asp-action="AddToSession" asp-controller="SurveySession" method="post" class="ms-auto me-2">
+                <input type="hidden" name="surveyId" value="@Model.SurveyID" />
+                <input type="hidden" name="returnUrl"
+                       value="@UriHelper.GetEncodedPathAndQuery(Context.Request)" /> <!-- ВИПРАВЛЕНО -->
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                    Почати опитування
+                </button>
+            </form>
+            <!-- КІНЕЦЬ ФОРМИ -->
+
+            <span class="badge bg-success p-2">Рейтинг: @Model.AverageRating.ToString("F2")</span>
+        </div>
+    </div>
+</div>

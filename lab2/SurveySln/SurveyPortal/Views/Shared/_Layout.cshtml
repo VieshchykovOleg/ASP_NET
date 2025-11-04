@@ -3,18 +3,34 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Портал для опитувань</title>
-    <!-- Підключення Bootstrap CSS -->
+    <!-- Підключення Bootstrap CSS (з Лаб 2) -->
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
 </head>
 <body>
     <header class="bg-primary text-white p-3 mb-4 shadow-sm">
-        <div class="container-fluid">
-            <span class="h3">Портал для опитувань</span>
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <span class="h3 mb-0">Портал для опитувань</span>
+
+            <vc:survey-session-summary />
+
         </div>
     </header>
+
+    <!-- ОНОВИ ЦЕЙ БЛОК -->
     <div class="container-fluid">
-        @RenderBody()
+        <div class="row">
+            <!-- 1. Колонка для сайдбару (якої у вас немає) -->
+            <div class="col-md-3">
+                <vc:navigation-menu />
+            </div>
+            <!-- 2. Колонка для контенту -->
+            <div class="col-md-9">
+                @RenderBody() <!-- Index.cshtml вставляється сюди -->
+            </div>
+
+        </div>
     </div>
+    <!-- КІНЕЦЬ ОНОВЛЕНОГО БЛОКУ -->
 
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
