@@ -1,27 +1,45 @@
+п»їusing Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using SurveyPortal.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Налаштування сервісів для MVC
+// Р”РѕРґР°РІР°РЅРЅСЏ СЃР»СѓР¶Р± MVC
 builder.Services.AddControllersWithViews();
 
-// Додавання DbContext та конфігурація підключення
-builder.Services.AddDbContext<SurveyDbContext>(opts => {
-    opts.UseSqlServer(builder.Configuration["ConnectionStrings:SurveyPortalConnection"]);
-});
+// Р”РѕРґР°РІР°РЅРЅСЏ РїС–РґС‚СЂРёРјРєРё СЃРµСЃС–Р№
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
-// Реєстрація репозиторію з областю видимості (Scoped)
+// вњ… Р РµС”СЃС‚СЂР°С†С–СЏ РєРѕРЅС‚РµРєСЃС‚Сѓ Р±Р°Р·Рё РґР°РЅРёС…
+builder.Services.AddDbContext<SurveyDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SurveyConnection")));
+
+// вњ… Р РµС”СЃС‚СЂР°С†С–СЏ СЂРµРїРѕР·РёС‚РѕСЂС–СЋ
 builder.Services.AddScoped<ISurveyRepository, EFSurveyRepository>();
 
 var app = builder.Build();
 
+SeedData.EnsurePopulated(app);
 
-// 2. Дозвіл на обслуговування статичних файлів (з wwwroot)
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-// 3. Реєстрація стандартного маршруту MVC
-app.MapDefaultControllerRoute();
+app.UseRouting();
 
-SeedData.EnsurePopulated(app);
+// вњ… Р’РёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ СЃРµСЃС–Р№ РїРµСЂРµРґ РјР°СЂС€СЂСѓС‚РёР·Р°С†С–С”СЋ
+app.UseSession();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

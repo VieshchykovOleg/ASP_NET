@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection; // Додайте цей using
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SurveyPortal.Models
 {
@@ -7,44 +7,41 @@ namespace SurveyPortal.Models
     {
         public static void EnsurePopulated(IApplicationBuilder app)
         {
-            // Використання IApplicationBuilder для отримання DbContext
-            using (var scope = app.ApplicationServices.CreateScope())
+            SurveyDbContext context = app.ApplicationServices.CreateScope()
+                .ServiceProvider.GetRequiredService<SurveyDbContext>();
+
+            if (!context.Surveys.Any())
             {
-                SurveyDbContext context = scope.ServiceProvider.GetRequiredService<SurveyDbContext>();
-
-                if (context.Database.GetPendingMigrations().Any())
-                {
-                    context.Database.Migrate(); // Застосування міграцій
-                }
-
-                if (!context.Surveys.Any())
-                {
-                    context.Surveys.AddRange(
+                context.Surveys.AddRange(
                     new Survey
                     {
-                        Title = "Опитування: Задоволеність сервісом",
-                        Description = "Збір відгуків про якість надання послуг.",
-                        Creator = "Адміністратор 1",
-                        AverageRating = 4.5m
+                        Title = "Опитування про спорт",
+                        Description = "Ваше ставлення до активного способу життя",
+                        Creator = "Admin",
+                        AverageRating = 4.2M,
+                        Category = "Спорт"
                     },
                     new Survey
                     {
-                        Title = "Опитування: Плани на відпустку",
-                        Description = "Дізнайтеся, куди планують поїхати наші співробітники цього року.",
-                        Creator = "HR-відділ",
-                        AverageRating = 3.8m
+                        Title = "Опитування про політику",
+                        Description = "Що ви думаєте про вибори?",
+                        Creator = "Admin",
+                        AverageRating = 3.8M,
+                        Category = "Політика"
                     },
                     new Survey
                     {
-                        Title = "Опитування: Улюблені страви",
-                        Description = "Визначення найпопулярніших страв серед користувачів.",
-                        Creator = "Кулінарний блог",
-                        AverageRating = 4.9m
-                    });
-                    context.SaveChanges();
-                }
+                        Title = "Опитування про фільми",
+                        Description = "Ваш улюблений жанр кіно?",
+                        Creator = "Admin",
+                        AverageRating = 4.5M,
+                        Category = "Культура"
+                    }
+                );
+                context.SaveChanges();
             }
         }
+
     }
 }
 

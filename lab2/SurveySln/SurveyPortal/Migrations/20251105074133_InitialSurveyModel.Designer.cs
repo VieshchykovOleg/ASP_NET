@@ -11,7 +11,7 @@ using SurveyPortal.Models;
 namespace SurveyPortal.Migrations
 {
     [DbContext(typeof(SurveyDbContext))]
-    [Migration("20251020180833_InitialSurveyModel")]
+    [Migration("20251105074133_InitialSurveyModel")]
     partial class InitialSurveyModel
     {
         /// <inheritdoc />
@@ -32,8 +32,12 @@ namespace SurveyPortal.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SurveyID"));
 
-                    b.Property<decimal>("AverageRating")
-                        .HasColumnType("decimal(8, 2)");
+                    b.Property<double>("AverageRating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Creator")
                         .IsRequired()

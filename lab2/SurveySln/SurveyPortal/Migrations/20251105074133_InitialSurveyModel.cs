@@ -19,7 +19,8 @@ namespace SurveyPortal.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Creator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AverageRating = table.Column<decimal>(type: "decimal(8,2)", nullable: false)
+                    AverageRating = table.Column<double>(type: "float", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
