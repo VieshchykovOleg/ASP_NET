@@ -36,6 +36,14 @@ namespace SurveyPortal.Models
                         Creator = "Admin",
                         AverageRating = 4.5M,
                         Category = "Культура"
+                    },
+                    new Survey
+                    {
+                        Title = "Опитування про машин",
+                        Description = "Ваша любима машина?",
+                        Creator = "Admin",
+                        AverageRating = 4.9M,
+                        Category = "Люди"
                     }
                 );
                 context.SaveChanges();

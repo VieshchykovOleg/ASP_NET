@@ -1,0 +1,27 @@
+@model Survey
+
+@{
+    ViewData["Title"] = "Підтвердження видалення";
+}
+
+<h2 class="mb-4 text-danger">@ViewData["Title"]</h2>
+
+<h3 class="text-danger">Ви впевнені, що хочете видалити це опитування?</h3>
+<div>
+    <h4>@Model.Title</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.SurveyID</dd>
+
+        <dt class="col-sm-3">Автор</dt>
+        <dd class="col-sm-9">@Model.Creator</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" name="surveyID" value="@Model.SurveyID" />
+
+        <button type="submit" class="btn btn-danger">Видалити</button>
+        <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+    </form>
+</div>

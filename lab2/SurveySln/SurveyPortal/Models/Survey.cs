@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations.Schema;
 namespace SurveyPortal.Models
+
 {
     public class Survey
     {
@@ -8,5 +10,8 @@ namespace SurveyPortal.Models
         public string Creator { get; set; } = "";
         public decimal AverageRating { get; set; }  
         public string Category { get; set; } = "";
+
+        // Зв'язок Один-до-Багатьох
+        public List<Question> Questions { get; set; } = new List<Question>();
     }
 }

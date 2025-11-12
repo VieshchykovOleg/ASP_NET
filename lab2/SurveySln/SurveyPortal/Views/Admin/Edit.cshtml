@@ -1,0 +1,19 @@
+@model Survey
+
+@{
+    ViewData["Title"] = Model.SurveyID == 0 ? "Створити опитування" : "Редагувати опитування";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Edit" method="post">
+
+    <partial name="SurveyEditor" model="Model" />
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary">Зберегти</button>
+        <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+    </div>
+</form>
