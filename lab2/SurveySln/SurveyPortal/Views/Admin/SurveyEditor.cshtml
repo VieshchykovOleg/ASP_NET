@@ -4,11 +4,13 @@
 
 <div class="mb-3">
     <label asp-for="Title" class="form-label"></label>
+    <div><span asp-validation-for="Title" class="text-danger"></span></div>
     <input asp-for="Title" class="form-control" />
 </div>
 
 <div class="mb-3">
     <label asp-for="Description" class="form-label"></label>
+    <div><span asp-validation-for="Description" class="text-danger"></span></div>
     <textarea asp-for="Description" class="form-control" rows="4"></textarea>
 </div>
 
@@ -16,12 +18,14 @@
     <div class="col-md-6">
         <div class="mb-3">
             <label asp-for="Creator" class="form-label"></label>
+            <div><span asp-validation-for="Creator" class="text-danger"></span></div>
             <input asp-for="Creator" class="form-control" />
         </div>
     </div>
     <div class="col-md-6">
         <div class="mb-3">
             <label asp-for="Category" class="form-label"></label>
+            <div><span asp-validation-for="Category" class="text-danger"></span></div>
             <input asp-for="Category" class="form-control" />
         </div>
     </div>
@@ -29,5 +33,6 @@
 
 <div class="mb-3">
     <label asp-for="AverageRating" class="form-label"></label>
+    <div><span asp-validation-for="AverageRating" class="text-danger"></span></div>
     <input asp-for="AverageRating" class="form-control" />
 </div>
