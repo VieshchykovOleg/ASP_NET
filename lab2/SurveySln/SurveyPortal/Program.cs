@@ -13,11 +13,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
-// ✅ Реєстрація контексту бази даних
 builder.Services.AddDbContext<SurveyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SurveyConnection")));
 
-// ✅ Реєстрація репозиторію
 builder.Services.AddScoped<ISurveyRepository, EFSurveyRepository>();
 
 var app = builder.Build();
@@ -35,7 +33,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// ✅ Використання сесій перед маршрутизацією
 app.UseSession();
 
 app.MapControllerRoute(
