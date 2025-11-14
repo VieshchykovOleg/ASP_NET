@@ -5,19 +5,21 @@
         <h5 class="card-title">@Model.Title</h5>
         <p class="card-text">@Model.Description</p>
 
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">Створив: @Model.Creator</small>
-            <span class="badge bg-success p-2">
-                Рейтинг: @Model.AverageRating.ToString("F2")
-            </span>
-        </div>
 
-        <form asp-action="AddToSession" asp-controller="SurveySession" method="post">
-            <input type="hidden" name="surveyId" value="@Model.SurveyID" />
-            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-            <button type="submit" class="btn btn-outline-primary btn-sm">
-                Зберегти на потім
-            </button>
-        </form>
+            <form asp-action="AddToSession" asp-controller="SurveySession" method="post" class="ms-auto me-2">
+                <input type="hidden" name="surveyId" value="@Model.SurveyID" />
+
+                <input type="hidden" name="returnUrl"
+                       value="@(Context.Request.Path + Context.Request.QueryString)" />
+
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                    Почати опитування
+                </button>
+            </form>
+
+            <span class="badge bg-success p-2">Рейтинг: @Model.AverageRating.ToString("F2")</span>
+        </div>
     </div>
 </div>

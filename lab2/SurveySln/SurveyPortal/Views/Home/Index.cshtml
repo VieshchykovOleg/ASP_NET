@@ -8,10 +8,13 @@
 <partial name="_SurveySummary" model="s" />
 }
 
+
+@if (Model?.PagingInfo != null && Model.PagingInfo.TotalPages > 1)
+{
 <nav class="mt-4">
     <ul class="pagination">
         @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
-        {
+            {
         <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
             <a class="page-link"
                asp-action="Index"
@@ -20,6 +23,7 @@
                 @i
             </a>
         </li>
-        }
+            }
     </ul>
 </nav>
+}

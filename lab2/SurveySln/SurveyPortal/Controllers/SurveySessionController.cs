@@ -1,49 +1,59 @@
 using Microsoft.AspNetCore.Mvc;
 using SurveyPortal.Models;
 using SurveyPortal.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SurveyPortal.Controllers
 {
-	public class SurveySessionController : Controller
-	{
-		private readonly ISurveyRepository repository;
+    [Authorize]
+    public class SurveySessionController : Controller
+    {
+        private ISurveyRepository repository;
+        private SurveySession surveySession;
 
-		public SurveySessionController(ISurveyRepository repo)
-		{
-			repository = repo;
-		}
+        public SurveySessionController(ISurveyRepository repo, SurveySession session)
+        {
+            repository = repo;
+            surveySession = session;
+        }
 
-		public IActionResult Index(string returnUrl)
-		{
-			var session = HttpContext.Session.GetJson<SurveySession>("SurveySession") ?? new SurveySession();
+        // --- ADD TO SESSION ---
+        [HttpPost]
+        public IActionResult AddToSession(long surveyId, string returnUrl)
+        {
+            // 1. Спочатку знаходимо об'єкт Survey
+            Survey? survey = repository.Surveys
+                .FirstOrDefault(s => s.SurveyID == surveyId);
 
-			ViewBag.ReturnUrl = returnUrl;
+            if (survey != null)
+            {
+                // 2. Потім передаємо ОБ'ЄКТ у сесію
+                surveySession.AddSurvey(survey);
+            }
+            return Redirect(returnUrl ?? "/");
+        }
 
-			return View(session);
-		}
+        // --- REMOVE FROM SESSION (тут була твоя помилка, рядок ~43) ---
+        [HttpPost]
+        public IActionResult RemoveFromSession(long surveyId, string returnUrl)
+        {
+            // 1. Спочатку знаходимо об'єкт Survey
+            Survey? survey = repository.Surveys
+                .FirstOrDefault(s => s.SurveyID == surveyId);
 
-		[HttpPost]
-		public IActionResult AddToSession(int surveyId, string returnUrl)
-		{
-			var survey = repository.Surveys.FirstOrDefault(s => s.SurveyID == surveyId);
-			if (survey != null)
-			{
-				var session = HttpContext.Session.GetJson<SurveySession>("SurveySession") ?? new SurveySession();
-				session.AddSurvey(survey);
-				HttpContext.Session.SetJson("SurveySession", session);
-			}
+            if (survey != null)
+            {
+                // 2. Потім передаємо ОБ'ЄКТ для видалення
+                surveySession.RemoveSurvey(survey);
+            }
+            return Redirect(returnUrl ?? "/");
+        }
 
-			return RedirectToAction("Index", new { returnUrl });
-		}
-
-		[HttpPost]
-		public IActionResult RemoveFromSession(int surveyId, string returnUrl)
-		{
-			var session = HttpContext.Session.GetJson<SurveySession>("SurveySession") ?? new SurveySession();
-			session.RemoveSurvey(surveyId);
-			HttpContext.Session.SetJson("SurveySession", session);
-
-			return RedirectToAction("Index", new { returnUrl });
-		}
-	}
+        // --- INDEX (Сторінка кошика) ---
+        public IActionResult Index(string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl ?? "/";
+            return View(surveySession);
+        }
+    }
 }

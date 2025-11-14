@@ -1,26 +1,68 @@
-using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json.Serialization;
+using SurveyPortal.Infrastructure;
 
 namespace SurveyPortal.Models
 {
-    // Модель для збереження незавершених опитувань у сесії
+    public class SurveySessionLine
+    {
+        public long SurveyID { get; set; }
+        public string Title { get; set; } = string.Empty;
+    }
+
     public class SurveySession
     {
-        public List<Survey> Lines { get; set; } = new List<Survey>();
-
-        public void AddSurvey(Survey survey)
+        public List<SurveySessionLine> Lines { get; set; } = new List<SurveySessionLine>();
+        public virtual void AddSurvey(Survey survey)
         {
-            if (!Lines.Any(s => s.SurveyID == survey.SurveyID))
+            SurveySessionLine? line = Lines
+                .Where(s => s.SurveyID == survey.SurveyID)
+                .FirstOrDefault();
+            if (line == null)
             {
-                Lines.Add(survey);
+                Lines.Add(new SurveySessionLine
+                {
+                    SurveyID = (long)survey.SurveyID!,
+                    Title = survey.Title
+                });
             }
         }
+        public virtual void RemoveSurvey(Survey survey) =>
+            Lines.RemoveAll(l => l.SurveyID == survey.SurveyID);
+        public virtual void Clear() => Lines.Clear();
+    }
 
-        public void RemoveSurvey(int surveyId)
+    // Переконайся, що цей клас існує і він public
+    public class SessionSurveySession : SurveySession
+    {
+        private const string SessionKey = "SurveySession";
+
+        [JsonIgnore]
+        public ISession? Session { get; private set; }
+
+        public static SurveySession GetSession(IServiceProvider services)
         {
-            Lines.RemoveAll(s => s.SurveyID == surveyId);
+            ISession? session = services.GetRequiredService<IHttpContextAccessor>()
+                .HttpContext?.Session;
+            SessionSurveySession surveySession = session?.GetJson<SessionSurveySession>(SessionKey)
+                ?? new SessionSurveySession();
+            surveySession.Session = session;
+            return surveySession;
         }
 
-        public void Clear() => Lines.Clear();
+        public override void AddSurvey(Survey survey)
+        {
+            base.AddSurvey(survey);
+            Session?.SetJson(SessionKey, this);
+        }
+        public override void RemoveSurvey(Survey survey)
+        {
+            base.RemoveSurvey(survey);
+            Session?.SetJson(SessionKey, this);
+        }
+        public override void Clear()
+        {
+            base.Clear();
+            Session?.SetJson(SessionKey, this);
+        }
     }
 }

@@ -14,17 +14,53 @@
                     <span class="h3 mb-0">Портал для опитувань</span>
                 </a>
 
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
                 <a asp-controller="Admin" asp-action="Index"
                    class="btn btn-outline-light btn-sm ms-3">
                     Керування
                 </a>
+                }
             </div>
 
-            <vc:survey-session-summary />
+            <div class="d-flex align-items-center">
+                @if (User.Identity.IsAuthenticated)
+                {
+                <vc:survey-session-summary />
+                }
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                <a asp-controller="Account" asp-action="Edit"
+                   class="btn btn-outline-light btn-sm ms-3">
+                    Мій кабінет (@User.Identity.Name)
+                </a>
+                <a asp-controller="Account" asp-action="Logout"
+                   class="btn btn-light btn-sm ms-2">
+                    Вихід
+                </a>
+                }
+                else
+                {
+                <a asp-controller="Account" asp-action="Login"
+                   class="btn btn-light btn-sm ms-3">
+                    Вхід
+                </a>
+                <a asp-controller="Account" asp-action="Register"
+                   class="btn btn-outline-light btn-sm ms-2">
+                    Реєстрація
+                </a>
+                }
+            </div>
         </div>
     </header>
 
     <div class="container-fluid">
+        @if (TempData["message"] != null)
+        {
+        <div class="alert alert-success">@TempData["message"]</div>
+        }
+
         <div class="row">
             <div class="col-md-3">
                 <vc:navigation-menu />
