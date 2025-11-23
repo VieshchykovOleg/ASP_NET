@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SurveyPortal.Models;
 using SurveyPortal.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using SurveyPortal.Data.Models;
 
 namespace SurveyPortal.Controllers
 {

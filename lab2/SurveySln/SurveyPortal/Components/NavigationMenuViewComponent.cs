@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SurveyPortal.Models;
+using SurveyPortal.Data.Models;
 
 namespace SurveyPortal.Components
 {

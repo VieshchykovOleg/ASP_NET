@@ -1,21 +1,17 @@
 using Microsoft.AspNetCore.Identity;
+using SurveyPortal.Data.Models;
 
 namespace SurveyPortal.Models
 {
     public static class IdentitySeedData
     {
-        // Імена ролей
-        private const string adminRole = "Admin";
-        private const string userRole = "User";
-
-        // Дані нашого адміна
-        private const string adminUser = "Admin";
+        // ЗМІНА ТУТ: Логін тепер такий самий, як Email
+        private const string adminUser = "admin@survey.com";
         private const string adminEmail = "admin@survey.com";
-        private const string adminPassword = "AdminPassword123";
+        private const string adminPassword = "Admin_P@ssw0rd123!";
 
         public static async Task EnsurePopulatedAsync(IApplicationBuilder app)
         {
-            // Отримуємо сервіси, необхідні для роботи з Identity
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var roleManager = scope.ServiceProvider
@@ -23,34 +19,34 @@ namespace SurveyPortal.Models
                 var userManager = scope.ServiceProvider
                     .GetRequiredService<UserManager<IdentityUser>>();
 
-                // 1. Створення ролі "User"
-                if (!await roleManager.RoleExistsAsync(userRole))
+                if (!await roleManager.RoleExistsAsync("User"))
                 {
-                    await roleManager.CreateAsync(new IdentityRole(userRole));
+                    await roleManager.CreateAsync(new IdentityRole("User"));
+                }
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                {
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
                 }
 
-                // 2. Створення ролі "Admin"
-                if (!await roleManager.RoleExistsAsync(adminRole))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(adminRole));
-                }
-
-                // 3. Створення користувача-адміна
                 IdentityUser? user = await userManager.FindByNameAsync(adminUser);
                 if (user == null)
                 {
                     user = new IdentityUser(adminUser)
                     {
                         Email = adminEmail,
-                        EmailConfirmed = true // Одразу підтверджуємо
+                        EmailConfirmed = true
                     };
-                    await userManager.CreateAsync(user, adminPassword);
+                    var createResult = await userManager.CreateAsync(user, adminPassword);
+
+                    if (!createResult.Succeeded)
+                    {
+                        throw new InvalidOperationException($"Failed to create admin user: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+                    }
                 }
 
-                // 4. Призначення ролі "Admin"
-                if (!await userManager.IsInRoleAsync(user, adminRole))
+                if (!await userManager.IsInRoleAsync(user, "Admin"))
                 {
-                    await userManager.AddToRoleAsync(user, adminRole);
+                    await userManager.AddToRoleAsync(user, "Admin");
                 }
             }
         }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SurveyPortal.Models;
 using SurveyPortal.Models.ViewModels;
-using System.Linq;
+using SurveyPortal.Data.Models;
 
 namespace SurveyPortal.Controllers
 {

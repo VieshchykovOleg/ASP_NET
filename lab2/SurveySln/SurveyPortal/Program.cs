@@ -1,19 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SurveyPortal.Models; // <-- ОСЬ ЦЕЙ РЯДОК ВИПРАВЛЯЄ ПОМИЛКУ
+using SurveyPortal.Models;
+using SurveyPortal.Data.Models;
 using Microsoft.AspNetCore.Identity;
+
+// ВАЖЛИВО: Тут НЕМАЄ "using Microsoft.OpenApi.Models;", це для API проекту.
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. MVC, DbContext та Репозиторій (з минулих лаб)
+// 1. MVC, DbContext та Репозиторій
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<SurveyDbContext>(opts => {
-    opts.UseSqlServer(builder.Configuration["ConnectionStrings:SurveyPortalConnection"]);
+    opts.UseSqlServer(
+        builder.Configuration["ConnectionStrings:SurveyPortalConnection"],
+        b => b.MigrationsAssembly("SurveyPortal")
+    );
 });
 builder.Services.AddScoped<ISurveyRepository, EFSurveyRepository>();
 
-// 2. Сервіси Сесій (з минулих лаб)
+// 2. Сервіси Сесій
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-// Цей рядок (рядок 17) тепер буде працювати
 builder.Services.AddScoped<SurveySession>(sp => SessionSurveySession.GetSession(sp));
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -26,10 +31,11 @@ builder.Services.AddSession(options =>
 // 3. Конфігурація Identity
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration["ConnectionStrings:IdentityConnection"])
+        builder.Configuration["ConnectionStrings:IdentityConnection"],
+        b => b.MigrationsAssembly("SurveyPortal")
+    )
 );
 
-// Додаємо Identity з підтримкою РОЛЕЙ
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
 {
     opts.Password.RequiredLength = 8;
@@ -41,7 +47,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
     .AddEntityFrameworkStores<AppIdentityDbContext>()
     .AddDefaultTokenProviders();
 
-
 var app = builder.Build();
 
 app.UseStaticFiles();
@@ -52,8 +57,8 @@ app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
 
+// Наповнення БД
 SeedData.EnsurePopulated(app);
-// Створення ролей та Адміна
 await IdentitySeedData.EnsurePopulatedAsync(app);
 
 app.Run();

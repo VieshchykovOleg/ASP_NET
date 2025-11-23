@@ -1,4 +1,4 @@
-namespace SurveyPortal.Models
+namespace SurveyPortal.Data.Models
 {
     public interface ISurveyRepository
     {

@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using SurveyPortal.Infrastructure;
+using SurveyPortal.Data.Models;
 
 namespace SurveyPortal.Models
 {

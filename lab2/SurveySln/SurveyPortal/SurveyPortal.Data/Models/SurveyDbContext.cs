@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace SurveyPortal.Models
+namespace SurveyPortal.Data.Models
 {
     public class SurveyDbContext : DbContext
     {

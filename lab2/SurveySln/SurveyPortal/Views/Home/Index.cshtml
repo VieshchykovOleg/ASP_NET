@@ -1,13 +1,12 @@
 @using SurveyPortal.Models.ViewModels
-@model SurveysListViewModel
+@using SurveyPortal.Data.Models
 
 <h4 class="mb-4">Доступні опитування</h4>
 
-@foreach (var s in Model?.Surveys ?? Enumerable.Empty<SurveyPortal.Models.Survey>())
+@foreach (var s in Model?.Surveys ?? Enumerable.Empty<Survey>())
 {
 <partial name="_SurveySummary" model="s" />
 }
-
 
 @if (Model?.PagingInfo != null && Model.PagingInfo.TotalPages > 1)
 {

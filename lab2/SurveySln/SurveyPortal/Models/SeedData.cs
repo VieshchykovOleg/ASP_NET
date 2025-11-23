@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using SurveyPortal.Data.Models; // Твій новий using
+using Microsoft.AspNetCore.Builder; // Потрібен для IApplicationBuilder
+using Microsoft.Extensions.DependencyInjection; // Потрібен для CreateScope
 
 namespace SurveyPortal.Models
 {
@@ -7,49 +9,49 @@ namespace SurveyPortal.Models
     {
         public static void EnsurePopulated(IApplicationBuilder app)
         {
-            SurveyDbContext context = app.ApplicationServices.CreateScope()
-                .ServiceProvider.GetRequiredService<SurveyDbContext>();
-
-            if (!context.Surveys.Any())
+            // БЛОК using (var scope...) МАЄ БУТИ ТУТ
+            using (var scope = app.ApplicationServices.CreateScope())
             {
-                context.Surveys.AddRange(
-                    new Survey
-                    {
-                        Title = "Опитування про спорт",
-                        Description = "Ваше ставлення до активного способу життя",
-                        Creator = "Admin",
-                        AverageRating = 4.2M,
-                        Category = "Спорт"
-                    },
-                    new Survey
-                    {
-                        Title = "Опитування про політику",
-                        Description = "Що ви думаєте про вибори?",
-                        Creator = "Admin",
-                        AverageRating = 3.8M,
-                        Category = "Політика"
-                    },
-                    new Survey
-                    {
-                        Title = "Опитування про фільми",
-                        Description = "Ваш улюблений жанр кіно?",
-                        Creator = "Admin",
-                        AverageRating = 4.5M,
-                        Category = "Культура"
-                    },
-                    new Survey
-                    {
-                        Title = "Опитування про машин",
-                        Description = "Ваша любима машина?",
-                        Creator = "Admin",
-                        AverageRating = 4.9M,
-                        Category = "Люди"
-                    }
-                );
-                context.SaveChanges();
+                // SurveyDbContext тепер з Data.Models
+                SurveyDbContext context = scope.ServiceProvider.GetRequiredService<SurveyDbContext>();
+
+                if (context.Database.GetPendingMigrations().Any())
+                {
+                    context.Database.Migrate();
+                }
+
+                if (!context.Surveys.Any())
+                {
+                    // Додай тут свій SeedData
+                    context.Surveys.AddRange(
+                        new Survey
+                        {
+                            Title = "Опитування: Задоволеність сервісом",
+                            Description = "Збір відгуків про якість надання послуг.",
+                            Creator = "Адміністратор 1",
+                            AverageRating = 4.50M,
+                            Category = "Сервіс"
+                        },
+                        new Survey
+                        {
+                            Title = "Опитування: Плани на відпустку",
+                            Description = "Дізнайтеся, куди планують поїхати наші співробітники цього року.",
+                            Creator = "HR-відділ",
+                            AverageRating = 3.80M,
+                            Category = "HR"
+                        },
+                         new Survey
+                          {
+                              Title = "Опитування: про вас",
+                              Description = "Дізнайтеся, про вас більше.",
+                              Creator = "HR-відділ",
+                              AverageRating = 2.90M,
+                              Category = "HR"
+                          }
+                    );
+                    context.SaveChanges();
+                }
             }
         }
-
     }
 }
-

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SurveyPortal.Models
+namespace SurveyPortal.Data.Models
 {
     public class Question
     {
