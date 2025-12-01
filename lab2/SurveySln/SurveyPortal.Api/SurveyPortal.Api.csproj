@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SurveyPortal\SurveyPortal.Data\SurveyPortal.Data.csproj" />
+    <ProjectReference Include="..\SurveyPortal.Shared\SurveyPortal.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

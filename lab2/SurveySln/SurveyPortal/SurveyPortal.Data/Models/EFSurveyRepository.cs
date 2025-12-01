@@ -1,3 +1,4 @@
+using SurveyPortal.Shared;
 namespace SurveyPortal.Data.Models
 {
     public class EFSurveyRepository : ISurveyRepository

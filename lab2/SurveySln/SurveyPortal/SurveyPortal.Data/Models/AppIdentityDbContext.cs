@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using SurveyPortal.Shared;
 namespace SurveyPortal.Data.Models
 {
     public class AppIdentityDbContext : IdentityDbContext<IdentityUser>

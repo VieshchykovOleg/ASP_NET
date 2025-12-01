@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SurveyPortal.Data.Models
+namespace SurveyPortal.Shared
 {
     public class Survey
     {

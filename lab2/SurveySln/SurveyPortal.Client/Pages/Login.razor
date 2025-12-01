@@ -1,0 +1,48 @@
+@page "/login"
+@using SurveyPortal.Client.Services
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h3>Вхід</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<div class="mb-3">
+    <label>Email</label>
+    <input class="form-control" @bind="email" placeholder="admin@survey.com" />
+</div>
+<div class="mb-3">
+    <label>Пароль</label>
+    <input type="password" class="form-control" @bind="password" />
+</div>
+
+<button class="btn btn-primary" @onclick="HandleLogin">Увійти</button>
+
+@code {
+    private string email = "admin@survey.com";
+    private string password = "";
+    private string errorMessage;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var result = await AuthService.Login(email, password);
+            if (result)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Невірні дані";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

@@ -23,7 +23,7 @@
 	
 
   <ItemGroup>
-    <ProjectReference Include="SurveyPortal.Data\SurveyPortal.Data.csproj" />
+    <ProjectReference Include="SurveyPortal.Data\SurveyPortal.Data.csproj" /><ProjectReference Include="..\SurveyPortal.Shared\SurveyPortal.Shared.csproj" />
   </ItemGroup>
 
 </Project>

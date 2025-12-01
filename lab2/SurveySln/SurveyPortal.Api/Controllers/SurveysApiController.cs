@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using SurveyPortal.Data.Models;
+using SurveyPortal.Data.Models; 
+using SurveyPortal.Shared;      
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 
@@ -21,7 +22,6 @@ namespace SurveyPortal.Api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Survey>>> GetSurveys()
         {
-            // Тут async потрібен, бо ToListAsync - асинхронний
             return await _repository.Surveys.ToListAsync();
         }
 
@@ -30,7 +30,6 @@ namespace SurveyPortal.Api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<Survey>> GetSurvey(long id)
         {
-            // Тут async потрібен, бо FirstOrDefaultAsync - асинхронний
             var survey = await _repository.Surveys.FirstOrDefaultAsync(s => s.SurveyID == id);
 
             if (survey == null)
@@ -44,7 +43,7 @@ namespace SurveyPortal.Api.Controllers
         // POST: /api/SurveysApi
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult<Survey> PostSurvey(Survey survey) // Прибрали async Task<>
+        public ActionResult<Survey> PostSurvey(Survey survey)
         {
             _repository.SaveSurvey(survey);
             return CreatedAtAction(nameof(GetSurvey), new { id = survey.SurveyID }, survey);
@@ -53,7 +52,7 @@ namespace SurveyPortal.Api.Controllers
         // PUT: /api/SurveysApi/5
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public IActionResult PutSurvey(long id, Survey survey) // Прибрали async Task<>
+        public IActionResult PutSurvey(long id, Survey survey)
         {
             if (id != survey.SurveyID)
             {
@@ -67,7 +66,7 @@ namespace SurveyPortal.Api.Controllers
         // DELETE: /api/SurveysApi/5
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
-        public IActionResult DeleteSurvey(long id) // Прибрали async Task<>
+        public IActionResult DeleteSurvey(long id)
         {
             var deletedSurvey = _repository.DeleteSurvey(id);
             if (deletedSurvey == null)

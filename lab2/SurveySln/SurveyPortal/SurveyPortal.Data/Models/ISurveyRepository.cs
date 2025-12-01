@@ -1,3 +1,5 @@
+using SurveyPortal.Shared;
+
 namespace SurveyPortal.Data.Models
 {
     public interface ISurveyRepository

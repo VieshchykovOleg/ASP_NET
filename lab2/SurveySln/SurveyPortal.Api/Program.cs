@@ -1,25 +1,28 @@
 using Microsoft.EntityFrameworkCore;
-using SurveyPortal.Data.Models;
+using SurveyPortal.Data.Models; 
+using SurveyPortal.Shared;     
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. Додавання сервісів контролерів З НАЛАШТУВАННЯМ JSON
+// Це дозволяє уникнути помилки "Object cycle detected" при серіалізації пов'язаних даних
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Це дозволяє ігнорувати циклічні посилання (Survey -> Question -> Survey)
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
 builder.Services.AddEndpointsApiExplorer();
 
-// 2. Налаштування Swagger
+// 2. Налаштування Swagger для підтримки Bearer токенів
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "SurveyPortal API", Version = "v1" });
 
+    // Визначаємо схему безпеки (Bearer)
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Введіть токен у форматі: Bearer {ваш_токен}",
@@ -29,6 +32,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
+    // Додаємо вимогу безпеки до всіх ендпоінтів
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
     {
         {
@@ -51,7 +55,7 @@ builder.Services.AddSwaggerGen(c =>
 // 3. Налаштування CORS
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowBlazor", policy =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyMethod()
@@ -72,10 +76,12 @@ builder.Services.AddDbContext<AppIdentityDbContext>(options =>
 builder.Services.AddScoped<ISurveyRepository, EFSurveyRepository>();
 
 // 6. Налаштування Identity та Автентифікації
+// ВАЖЛИВО: Вказуємо схему автентифікації та додаємо обробник BearerToken
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
     options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
+    options.DefaultSignInScheme = IdentityConstants.BearerScheme; // Виправляє помилку 500 при логіні
 })
 .AddBearerToken(IdentityConstants.BearerScheme);
 
@@ -90,7 +96,7 @@ builder.Services.AddIdentityCore<IdentityUser>(opts =>
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppIdentityDbContext>()
-    .AddApiEndpoints();
+    .AddApiEndpoints(); // Цей метод також налаштовує генерацію токенів
 
 var app = builder.Build();
 
@@ -102,12 +108,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors();
+
+// Важливо: CORS має бути перед Auth
+app.UseCors("AllowBlazor");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapIdentityApi<IdentityUser>();
+// 8. Реєстрація ендпоїнтів
+app.MapIdentityApi<IdentityUser>(); // /register, /login
 app.MapControllers();
 
 app.Run();

@@ -5,7 +5,7 @@ namespace SurveyPortal.Models
 {
     public static class IdentitySeedData
     {
-        // ЗМІНА ТУТ: Логін тепер такий самий, як Email
+        
         private const string adminUser = "admin@survey.com";
         private const string adminEmail = "admin@survey.com";
         private const string adminPassword = "Admin_P@ssw0rd123!";
