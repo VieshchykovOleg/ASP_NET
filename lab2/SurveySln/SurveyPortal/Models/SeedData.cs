@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SurveyPortal.Data.Models; // Твій новий using
 using Microsoft.AspNetCore.Builder; // Потрібен для IApplicationBuilder
 using Microsoft.Extensions.DependencyInjection; // Потрібен для CreateScope
-
+using SurveyPortal.Shared;
 namespace SurveyPortal.Models
 {
     public static class SeedData

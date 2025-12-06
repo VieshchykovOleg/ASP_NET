@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using SurveyPortal.Shared;
+using SurveyPortal.Shared; 
 
-namespace SurveyPortal.Shared
+namespace SurveyPortal.Data.Models
 {
     public class SurveyDbContext : DbContext
     {
@@ -9,7 +9,6 @@ namespace SurveyPortal.Shared
             : base(options) { }
 
         public DbSet<Survey> Surveys => Set<Survey>();
-
         public DbSet<Question> Questions => Set<Question>();
     }
 }

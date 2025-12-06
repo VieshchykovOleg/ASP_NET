@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using SurveyPortal.Data.Models;
+using SurveyPortal.Shared;      // Важливо для моделі Survey
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR; // <--- ДОДАНО
+using SurveyPortal.Hubs;            // <--- ДОДАНО
 
 namespace SurveyPortal.Controllers
 {
@@ -9,37 +11,38 @@ namespace SurveyPortal.Controllers
     public class AdminController : Controller
     {
         private ISurveyRepository repository;
+        private IHubContext<SurveyHub> hubContext; // <--- 1. Поле для хабу
 
-        public AdminController(ISurveyRepository repo)
+        // 2. Ін'єкція хабу через конструктор
+        public AdminController(ISurveyRepository repo, IHubContext<SurveyHub> hub)
         {
             repository = repo;
+            hubContext = hub;
         }
 
-        // READ (List)
         public IActionResult Index() => View(repository.Surveys);
 
-        // CREATE / EDIT (GET)
         public IActionResult Edit(long id)
         {
-            // Survey тепер відомий
-            Survey? survey = repository.Surveys
-                .FirstOrDefault(s => s.SurveyID == id);
-
-            if (survey == null)
-            {
-                return NotFound();
-            }
+            Survey? survey = repository.Surveys.FirstOrDefault(s => s.SurveyID == id);
+            if (survey == null) return NotFound();
             return View(survey);
         }
 
-        // CREATE / EDIT (POST)
+        // 3. Метод став асинхронним (async Task)
         [HttpPost]
-        public IActionResult Edit(Survey survey) // Survey тепер відомий
+        public async Task<IActionResult> Edit(Survey survey)
         {
             if (ModelState.IsValid)
             {
                 repository.SaveSurvey(survey);
                 TempData["message"] = $"Опитування '{survey.Title}' було збережено.";
+
+                // 4. ВІДПРАВКА ПОВІДОМЛЕННЯ "ReceiveSurveyUpdate"
+                // Ми надсилаємо ID, нову назву та новий рейтинг усім підключеним клієнтам.
+                await hubContext.Clients.All.SendAsync("ReceiveSurveyUpdate",
+                    survey.SurveyID, survey.Title, survey.AverageRating);
+
                 return RedirectToAction("Index");
             }
             else
@@ -48,7 +51,11 @@ namespace SurveyPortal.Controllers
             }
         }
 
-        // ... (інші методи Details, Delete, DeleteConfirmed) ...
-        // Вони також автоматично виправляться, оскільки Survey та ISurveyRepository тепер відомі.
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(long surveyID)
+        {
+            repository.DeleteSurvey(surveyID);
+            return RedirectToAction("Index");
+        }
     }
 }

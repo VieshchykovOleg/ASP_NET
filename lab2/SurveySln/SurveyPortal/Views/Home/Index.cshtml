@@ -1,28 +1,65 @@
 @using SurveyPortal.Models.ViewModels
-@using SurveyPortal.Data.Models
+@using SurveyPortal.Shared
+@model SurveysListViewModel
 
-<h4 class="mb-4">Доступні опитування</h4>
+<h4 class="mb-4">Доступні опитування <span class="badge bg-secondary">Live</span></h4>
 
 @foreach (var s in Model?.Surveys ?? Enumerable.Empty<Survey>())
 {
-<partial name="_SurveySummary" model="s" />
+    <partial name="_SurveySummary" model="s" />
 }
 
 @if (Model?.PagingInfo != null && Model.PagingInfo.TotalPages > 1)
 {
-<nav class="mt-4">
-    <ul class="pagination">
-        @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+    <nav class="mt-4">
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
             {
-        <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
-            <a class="page-link"
-               asp-action="Index"
-               asp-route-surveyPage="@i"
-               asp-route-category="@Model.CurrentCategory">
-                @i
-            </a>
-        </li>
+                <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-surveyPage="@i"
+                       asp-route-category="@Model.CurrentCategory">
+                        @i
+                    </a>
+                </li>
             }
-    </ul>
-</nav>
+        </ul>
+    </nav>
 }
+
+<!-- 1. Підключення бібліотеки SignalR -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+
+<!-- 2. Скрипт обробки -->
+<script>
+    // Створення з'єднання
+    var connection = new signalR.HubConnectionBuilder().withUrl("/surveyHub").build();
+
+    // Обробка події "ReceiveSurveyUpdate"
+    connection.on("ReceiveSurveyUpdate", function (id, title, rating) {
+        var titleElem = document.getElementById("survey-title-" + id);
+        var ratingElem = document.getElementById("survey-rating-" + id);
+        var cardElem = document.getElementById("survey-card-" + id);
+
+        if (titleElem && ratingElem) {
+            // Оновлюємо текст (плавно)
+            titleElem.innerText = title;
+            ratingElem.innerText = "Рейтинг: " + rating.toFixed(2).replace('.', ',');
+
+            // Ефект підсвічування
+            if (cardElem) {
+                cardElem.style.transition = "background-color 0.5s";
+                cardElem.style.backgroundColor = "#d4edda"; // Зелений відтінок
+                setTimeout(function () {
+                    cardElem.style.backgroundColor = "white";
+                }, 1000);
+            }
+        }
+    });
+
+    // Запуск
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+</script>

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using SurveyPortal.Infrastructure;
-using SurveyPortal.Data.Models;
+using SurveyPortal.Shared;
 
 namespace SurveyPortal.Models
 {
@@ -13,26 +13,29 @@ namespace SurveyPortal.Models
     public class SurveySession
     {
         public List<SurveySessionLine> Lines { get; set; } = new List<SurveySessionLine>();
+
         public virtual void AddSurvey(Survey survey)
         {
             SurveySessionLine? line = Lines
                 .Where(s => s.SurveyID == survey.SurveyID)
                 .FirstOrDefault();
+
             if (line == null)
             {
                 Lines.Add(new SurveySessionLine
                 {
-                    SurveyID = (long)survey.SurveyID!,
+                    SurveyID = survey.SurveyID,
                     Title = survey.Title
                 });
             }
         }
+
         public virtual void RemoveSurvey(Survey survey) =>
             Lines.RemoveAll(l => l.SurveyID == survey.SurveyID);
+
         public virtual void Clear() => Lines.Clear();
     }
 
-    // Переконайся, що цей клас існує і він public
     public class SessionSurveySession : SurveySession
     {
         private const string SessionKey = "SurveySession";
@@ -44,8 +47,10 @@ namespace SurveyPortal.Models
         {
             ISession? session = services.GetRequiredService<IHttpContextAccessor>()
                 .HttpContext?.Session;
+
             SessionSurveySession surveySession = session?.GetJson<SessionSurveySession>(SessionKey)
                 ?? new SessionSurveySession();
+
             surveySession.Session = session;
             return surveySession;
         }
@@ -55,11 +60,13 @@ namespace SurveyPortal.Models
             base.AddSurvey(survey);
             Session?.SetJson(SessionKey, this);
         }
+
         public override void RemoveSurvey(Survey survey)
         {
             base.RemoveSurvey(survey);
             Session?.SetJson(SessionKey, this);
         }
+
         public override void Clear()
         {
             base.Clear();

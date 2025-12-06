@@ -2,14 +2,14 @@
 using SurveyPortal.Models;
 using SurveyPortal.Data.Models;
 using Microsoft.AspNetCore.Identity;
-
-// ВАЖЛИВО: Тут НЕМАЄ "using Microsoft.OpenApi.Models;", це для API проекту.
+using SurveyPortal.Hubs; //
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. MVC, DbContext та Репозиторій
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<SurveyDbContext>(opts => {
+builder.Services.AddDbContext<SurveyDbContext>(opts =>
+{
     opts.UseSqlServer(
         builder.Configuration["ConnectionStrings:SurveyPortalConnection"],
         b => b.MigrationsAssembly("SurveyPortal")
@@ -47,6 +47,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
     .AddEntityFrameworkStores<AppIdentityDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 app.UseStaticFiles();
@@ -57,7 +59,9 @@ app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
 
-// Наповнення БД
+// 5. Реєстрація маршруту для хабу
+app.MapHub<SurveyHub>("/surveyHub");
+
 SeedData.EnsurePopulated(app);
 await IdentitySeedData.EnsurePopulatedAsync(app);
 

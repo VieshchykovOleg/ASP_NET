@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SurveyPortal.Data.Models;
+using SurveyPortal.Shared;
 
 namespace SurveyPortal.Models.ViewModels
 {
