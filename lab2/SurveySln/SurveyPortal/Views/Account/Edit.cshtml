@@ -1,0 +1,38 @@
+@model SurveyPortal.Models.ViewModels.EditModel
+
+<h2 class="mb-4">Особистий кабінет</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Edit" asp-controller="Account" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label class="form-label">Ім'я користувача (не можна змінити)</label>
+        <input value="@User.Identity.Name" class="form-control" disabled />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <div><span asp-validation-for="Email" class="text-danger"></span></div>
+        <input asp-for="Email" class="form-control" />
+    </div>
+
+    <hr />
+    <h5 class="mb-3">Зміна пароля</h5>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <div><span asp-validation-for="Password" class="text-danger"></span></div>
+        <input asp-for="Password" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ConfirmPassword" class="form-label"></label>
+        <div><span asp-validation-for="ConfirmPassword" class="text-danger"></span></div>
+        <input asp-for="ConfirmPassword" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Зберегти зміни</button>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Скасувати</a>
+</form>

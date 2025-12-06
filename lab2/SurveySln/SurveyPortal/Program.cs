@@ -1,27 +1,68 @@
-using Microsoft.EntityFrameworkCore;
+п»їusing Microsoft.EntityFrameworkCore;
 using SurveyPortal.Models;
+using SurveyPortal.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using SurveyPortal.Hubs; //
+
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Налаштування сервісів для MVC
+// 1. MVC, DbContext С‚Р° Р РµРїРѕР·РёС‚РѕСЂС–Р№
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<SurveyDbContext>(opts =>
+{
+    opts.UseSqlServer(
+        builder.Configuration["ConnectionStrings:SurveyPortalConnection"],
+        b => b.MigrationsAssembly("SurveyPortal")
+    );
+});
+builder.Services.AddScoped<ISurveyRepository, EFSurveyRepository>();
 
-// Додавання DbContext та конфігурація підключення
-builder.Services.AddDbContext<SurveyDbContext>(opts => {
-    opts.UseSqlServer(builder.Configuration["ConnectionStrings:SurveyPortalConnection"]);
+// 2. РЎРµСЂРІС–СЃРё РЎРµСЃС–Р№
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<SurveySession>(sp => SessionSurveySession.GetSession(sp));
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
-// Реєстрація репозиторію з областю видимості (Scoped)
-builder.Services.AddScoped<ISurveyRepository, EFSurveyRepository>();
+// 3. РљРѕРЅС„С–РіСѓСЂР°С†С–СЏ Identity
+builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration["ConnectionStrings:IdentityConnection"],
+        b => b.MigrationsAssembly("SurveyPortal")
+    )
+);
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
+{
+    opts.Password.RequiredLength = 8;
+    opts.Password.RequireDigit = true;
+    opts.Password.RequireUppercase = true;
+    opts.Password.RequireNonAlphanumeric = false;
+    opts.User.RequireUniqueEmail = true;
+})
+    .AddEntityFrameworkStores<AppIdentityDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-
-// 2. Дозвіл на обслуговування статичних файлів (з wwwroot)
 app.UseStaticFiles();
+app.UseSession();
 
-// 3. Реєстрація стандартного маршруту MVC
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapDefaultControllerRoute();
 
+// 5. Р РµС”СЃС‚СЂР°С†С–СЏ РјР°СЂС€СЂСѓС‚Сѓ РґР»СЏ С…Р°Р±Сѓ
+app.MapHub<SurveyHub>("/surveyHub");
+
 SeedData.EnsurePopulated(app);
+await IdentitySeedData.EnsurePopulatedAsync(app);
 
 app.Run();

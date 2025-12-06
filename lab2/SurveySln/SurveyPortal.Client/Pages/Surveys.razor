@@ -1,0 +1,42 @@
+@page "/surveys"
+@using SurveyPortal.Shared
+@inject HttpClient Http
+
+<h3>Опитування</h3>
+
+@if (surveys == null)
+{
+    <p><em>Завантаження...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Категорія</th>
+                <th>Рейтинг</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in surveys)
+            {
+                <tr>
+                    <td>@s.Title</td>
+                    <td>@s.Category</td>
+                    <td>@s.AverageRating</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Survey>? surveys;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Звертаємося до нашого API
+        surveys = await Http.GetFromJsonAsync<List<Survey>>("api/SurveysApi");
+    }
+}

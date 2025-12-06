@@ -1,0 +1,33 @@
+@model Survey
+
+@{
+    ViewData["Title"] = "Деталі опитування";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div>
+    <h4>@Model.Title</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.SurveyID</dd>
+
+        <dt class="col-sm-3">Опис</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+
+        <dt class="col-sm-3">Автор</dt>
+        <dd class="col-sm-9">@Model.Creator</dd>
+
+        <dt class="col-sm-3">Категорія</dt>
+        <dd class="col-sm-9">@Model.Category</dd>
+
+        <dt class="col-sm-3">Рейтинг</dt>
+        <dd class="col-sm-9">@Model.AverageRating.ToString("F2")</dd>
+    </dl>
+
+</div>
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.SurveyID" class="btn btn-warning">Редагувати</a>
+    <a asp-action="Index" class="btn btn-secondary">Назад до списку</a>
+</div>

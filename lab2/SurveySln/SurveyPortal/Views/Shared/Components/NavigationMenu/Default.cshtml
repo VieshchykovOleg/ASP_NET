@@ -1,0 +1,25 @@
+@model IEnumerable<string>
+    @{
+    string? selectedCategory = ViewBag.SelectedCategory as string;
+    }
+
+    <h5 class="mb-3">Категорії</h5>
+
+    <div class="list-group">
+        <a asp-action="Index"
+           asp-controller="Home"
+           asp-route-category=""
+           class="list-group-item list-group-item-action @(selectedCategory == null ? "active" : "")">
+            Усі категорії
+        </a>
+
+        @foreach (var category in Model)
+    {
+        <a asp-action="Index"
+           asp-controller="Home"
+           asp-route-category="@category"
+           class="list-group-item list-group-item-action @(category == selectedCategory ? "active" : "")">
+            @category
+        </a>
+    }
+    </div>

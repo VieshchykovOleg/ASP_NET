@@ -1,0 +1,29 @@
+﻿@using SurveyPortal.Shared
+@model Survey
+
+<div class="card mb-3 shadow-sm" id="survey-card-@Model.SurveyID">
+    <div class="card-body">
+
+        <!-- Додаємо ID для заголовка -->
+        <h5 class="card-title" id="survey-title-@Model.SurveyID">@Model.Title</h5>
+
+        <p class="card-text">@Model.Description</p>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">Створив: @Model.Creator</small>
+
+            <form asp-action="AddToSession" asp-controller="SurveySession" method="post" class="ms-auto me-2">
+                <input type="hidden" name="surveyId" value="@Model.SurveyID" />
+                <input type="hidden" name="returnUrl"
+                       value="@(Context.Request.Path + Context.Request.QueryString)" />
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                    Почати опитування
+                </button>
+            </form>
+
+            <span class="badge bg-success p-2" id="survey-rating-@Model.SurveyID">
+                Рейтинг: @Model.AverageRating.ToString("F2")
+            </span>
+        </div>
+    </div>
+</div>

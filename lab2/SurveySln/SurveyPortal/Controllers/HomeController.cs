@@ -1,25 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
 using SurveyPortal.Models;
-using SurveyPortal.Models.ViewModels; // Додайте using
+using SurveyPortal.Models.ViewModels;
+using SurveyPortal.Data.Models;
 
 namespace SurveyPortal.Controllers
 {
     public class HomeController : Controller
     {
-        private ISurveyRepository repository;
+        private readonly ISurveyRepository repository;
+
         public HomeController(ISurveyRepository repo)
         {
             repository = repo;
         }
 
-        public IActionResult Index(int surveyPage = 1)
+        public IActionResult Index(string? category, int surveyPage = 1)
         {
-            var itemsPerPage = 4; // Кількість елементів на сторінку
+            int itemsPerPage = 4;
 
-            return View(new SurveysListViewModel
+            var surveys = repository.Surveys
+                .Where(s => category == null || s.Category == category)
+                .OrderBy(s => s.SurveyID);
+
+            var model = new SurveysListViewModel
             {
-                Surveys = repository.Surveys
-                    .OrderBy(s => s.SurveyID) // Сортування для стабільного пейджингу
+                Surveys = surveys
                     .Skip((surveyPage - 1) * itemsPerPage)
                     .Take(itemsPerPage),
 
@@ -27,9 +32,13 @@ namespace SurveyPortal.Controllers
                 {
                     CurrentPage = surveyPage,
                     ItemsPerPage = itemsPerPage,
-                    TotalItems = repository.Surveys.Count()
-                }
-            });
+                    TotalItems = surveys.Count()
+                },
+
+                CurrentCategory = category
+            };
+
+            return View(model);
         }
     }
 }
